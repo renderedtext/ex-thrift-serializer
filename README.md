@@ -17,7 +17,7 @@ end
 Also, add it to the list of your applications:
 ```elixir
 def application do
-  [applications: [:tackle]]
+  [applications: [:elixir-thrift-serializer]]
 end
 ```
 
