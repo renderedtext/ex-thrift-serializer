@@ -6,13 +6,13 @@ defmodule ElixirThriftSerializerTest do
   test "serialize and deserialize" do
     user = ElixirThriftSerializerStruct.User.new(name: "Wade Winston Wilson", age: 25)
 
-    binary = elixir_to_binary(user, :User)
+    serialized = serialize(user, :User)
 
-    {:ok, debinarized} = binary_to_elixir(binary, :User)
+    {:ok, deserialized} = deserialize(serialized, :User)
 
     assert user == %ElixirThriftSerializerTest.ElixirThriftSerializerStruct.User{age: 25,
         name: "Wade Winston Wilson"}
 
-    assert user == debinarized
+    assert user == deserialized
   end
 end

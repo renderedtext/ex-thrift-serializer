@@ -15,7 +15,7 @@ defmodule ElixirThriftSerializer do
         use Riffed.Struct, [{unquote(file_types), [unquote_splicing(structs)]}]
       end
 
-      def binary_to_elixir(record_binary, struct) do
+      def deserialize(record_binary, struct) do
 
         struct_definition = {:struct, {unquote(file_types), struct}}
 
@@ -28,12 +28,12 @@ defmodule ElixirThriftSerializer do
           end
 
         rescue _ ->
-            Logger.error "Unable to decode!"
+            Logger.error "Unable to deserialize!"
             {:error, :cant_decode}
         end
       end
 
-      def elixir_to_binary(struct_to_binarise, struct) do
+      def serialize(struct_to_serialize, struct) do
 
           struct_definition = {:struct, {unquote(file_types), struct}}
 
@@ -41,7 +41,7 @@ defmodule ElixirThriftSerializer do
               {:ok, pf} <- :thrift_binary_protocol.new_protocol_factory(tf, []),
               {:ok, binary_protocol} <- pf.()) do
 
-                proto = ElixirThriftSerializerStruct.to_erlang(struct_to_binarise, struct_definition)
+                proto = ElixirThriftSerializerStruct.to_erlang(struct_to_serialize, struct_definition)
                 |> write_proto(binary_protocol, struct_definition)
 
                 {_, data} = :thrift_protocol.flush_transport(proto)
