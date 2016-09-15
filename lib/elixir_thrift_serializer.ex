@@ -15,8 +15,9 @@ defmodule ElixirThriftSerializer do
         use Riffed.Struct, [{unquote(file_types), [unquote_splicing(structs)]}]
       end
 
-      def deserialize(record_binary, struct) do
+      def deserialize(record_binary, model) do
 
+        [{:model, struct}] = model
         struct_definition = {:struct, {unquote(file_types), struct}}
 
         try do
@@ -33,8 +34,9 @@ defmodule ElixirThriftSerializer do
         end
       end
 
-      def serialize(struct_to_serialize, struct) do
+      def serialize(struct_to_serialize, model) do
 
+          [{:model, struct}] = model
           struct_definition = {:struct, {unquote(file_types), struct}}
 
           with({:ok, tf} <- :thrift_memory_buffer.new_transport_factory(),

@@ -57,9 +57,9 @@ This would be an equivalent of:
 In order to serialize an instance of an `User` struct, do the following:
 ```elixir
 user = ElixirThriftStruct.User.new(name: "Wade Winston Wilson", age: 25)
-serialized = serialize(user, :User)
+serialized = serialize(user, model: :User)
 ```
 To deserialize a previously serialized instance, you would do the following:
 ```elixir
-{:ok, deserialized} = deserialize(serialized, :User)
+{:ok, deserialized} = deserialize(serialized, model: :User)
 ```
