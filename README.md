@@ -10,14 +10,14 @@ Add the following to the list of your dependencies:
 ```elixir
 def deps do
   [
-    {:elixir-thrift-serializer, github: "renderedtext/elixir-thrift-serializer"}
+    {:elixir_thrift_serializer, github: "renderedtext/elixir-thrift-serializer"}
   ]
 end
 ```
 Also, add it to the list of your applications:
 ```elixir
 def application do
-  [applications: [:elixir-thrift-serializer]]
+  [applications: [:elixir_thrift_serializer]]
 end
 ```
 
