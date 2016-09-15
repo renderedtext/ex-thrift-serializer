@@ -36,35 +36,30 @@ struct User {
   2: i32 age
 }
 ```
-Also, you need to define a module, where you will specify which are the structs
-you'll be using. For an example, if you would have an `User` struct, inside a
-file called `thrift/models.thrift`, you would have something like this:
+Lets say that you have defined a struct named `User`, like in the example, and
+placed it in a file called `thrift/models.thrift`. In order to use the
+Serializer, you would have to write the following line:
 ```elixir
-defmodule ElixirThriftStruct do
-  use Riffed.Struct, models_types: [:User]
-end
+use ElixirThriftSerializer, file: ["models"], structs: [:User]
 ```
-Note that it says `models_types`. The <i>models</i> part comes from the name of
-the file where the Thrift struct is placed.<br/>
-Creating an instance of a Thrift struct in Elixir is done like this:
+In the `file` argument pass the name of the file where the structs are
+stored and in the `structs` argument pass the names of the structs in the
+file you'll be using as atoms. <br/>
+What this does is creates a new module called `ElixirThriftSerializerStruct`
+that can be used to create an instance of a struct, like this:
 ```elixir
-ElixirThrift.Struct.User.new(name: "Wade Winston Wilson", age: 25)
+ElixirThriftSerializerStruct.User.new(name: "Wade Winston Wilson", age: 25)
 ```
 This would be an equivalent of:
 ```elixir
 %ElixirThrift.Struct.User{age: 25, name: "Wade Winston Wilson"}
 ```
-To serialize a struct called `User`, provided that you defined a module called
-`ElixirThriftStruct` like in the example above, you would do the following:
+In order to serialize an instance of an `User` struct, do the following:
 ```elixir
 user = ElixirThriftStruct.User.new(name: "Wade Winston Wilson", age: 25)
-binary = ElixirThriftSerializer.elixir_to_binary(user,
-    {:struct, {:models_types, :User}},
-    &ElixirThriftStruct.to_erlang/2)
+binary = elixir_to_binary(user, :User)
 ```
-To deserialize the previously binarized User struct, you would do the following:
+To deserialize the previously binarized instance, you would do the following:
 ```elixir
-{:ok, debinarized} = ElixirThriftSerializer.binary_to_elixir(binary,
-    {:struct, {:models_types, :User}},
-    &ElixirThriftStruct.to_elixir/2)
+{:ok, debinarized} = binary_to_elixir(binary, :User)
 ```
