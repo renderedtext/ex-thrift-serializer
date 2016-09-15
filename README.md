@@ -44,9 +44,9 @@ use ElixirThriftSerializer, file: ["models"], structs: [:User]
 ```
 In the `file` argument pass the name of the file where the structs are
 stored and in the `structs` argument pass the names of the structs in the
-file you'll be using as atoms. <br/>
-What this does is creates a new module called `ElixirThriftSerializerStruct`
-that can be used to create an instance of a struct, like this:
+file you'll be using as atoms. What this does is define a new module called
+`ElixirThriftSerializerStruct` that can be used to create an instance of a
+struct, like this:
 ```elixir
 ElixirThriftSerializerStruct.User.new(name: "Wade Winston Wilson", age: 25)
 ```
