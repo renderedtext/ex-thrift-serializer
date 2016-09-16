@@ -20,8 +20,26 @@ def application do
   [applications: [:elixir_thrift_serializer]]
 end
 ```
+## Quick usage guide
 
-## Usage
+The following is an example of creating an instance of a Thrift struct called
+`User`, which is defined in a file named `thrift/models.thrift`. The instance
+is then serialized and deserialized.
+```elixir
+defmodule TestModule do
+
+  use ElixirThriftSerializer, file: ["models"], structs: [:User]
+
+  def test_function do
+    user = ThriftStruct.User.new(name: "Wade Winston Wilson", age: 25)
+    serialized = ThriftSerializer.serialize(user, model: :User)
+    deserialized = ThriftSerializer.deserialize(serialized, model: :User)
+  end
+
+end
+```
+
+## Detailed usage guide
 
 <b>IMPORTANT:</b> Make sure to place all your Thrift structs inside a folder
 named `thrift`! The app is configured to search for them there.
@@ -45,21 +63,23 @@ use ElixirThriftSerializer, file: ["models"], structs: [:User]
 In the `file` argument pass the name of the file where the structs are
 stored and in the `structs` argument pass the names of the structs in the
 file you'll be using as atoms. What this does is it defines a new module called
-`ElixirThriftSerializerStruct` that can be used to create an instance of a
+`ThriftSerializerStruct` that can be used to create an instance of a
 struct, like this:
 ```elixir
-ElixirThriftSerializerStruct.User.new(name: "Wade Winston Wilson", age: 25)
+ThriftSerializerStruct.User.new(name: "Wade Winston Wilson", age: 25)
 ```
 This would be an equivalent of:
 ```elixir
-%ElixirThrift.Struct.User{age: 25, name: "Wade Winston Wilson"}
+%ThriftSerializerStruct.User{age: 25, name: "Wade Winston Wilson"}
 ```
-In order to serialize an instance of an `User` struct, do the following:
+The serialization and deserialization is handled by a module called
+`ThriftSerializer`, which is also defined with the `ThriftSerializerStruct`
+module. In order to serialize an instance of an `User` struct, do the following:
 ```elixir
-user = ElixirThriftStruct.User.new(name: "Wade Winston Wilson", age: 25)
-serialized = serialize(user, model: :User)
+user = ThriftStruct.User.new(name: "Wade Winston Wilson", age: 25)
+serialized = ThriftSerializer.serialize(user, model: :User)
 ```
 To deserialize a previously serialized instance, you would do the following:
 ```elixir
-{:ok, deserialized} = deserialize(serialized, model: :User)
+deserialized = ThriftSerializer.deserialize(serialized, model: :User)
 ```
