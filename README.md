@@ -36,7 +36,7 @@ defmodule TestModule do
   def test_function do
 
     user = Structs.User.new(name: "Wade Winston Wilson", age: 25)
-    serialized = ElxirThriftSerializer.serialize(user, [{:model, :User}]),
+    serialized = ElxirThriftSerializer.serialize(user, [{:models, :User}]),
         "models", Structs)
     deserialized = ElixirtThriftSerializer.deserialize(serialized,
         [{:models, :User}], "models", Structs)
