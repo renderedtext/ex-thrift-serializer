@@ -21,6 +21,31 @@ def application do
 end
 ```
 
+## Quick usage guide
+
+Lets say there is a Thrift struct called `User` defined in a file named
+`thrift/models.thrift`. To create an instance, serialize and deserialize, do
+the following:
+```elixir
+defmodule TestModule do
+
+  defmodule Structs do
+    use Riffed.Struct, models_types: [:User]
+  end
+
+  def test_function do
+
+    user = Structs.User.new(name: "Wade Winston Wilson", age: 25)
+    serialized = ElxirThriftSerializer.serialize(user, [{:model, :User}]),
+        "models", Structs)
+    deserialized = ElixirtThriftSerializer.deserialize(serialized,
+        [{:models, :User}], "models", Structs)
+
+  end
+
+end
+```
+# WORK IN PROGRESS
 ## Usage
 
 <b>IMPORTANT:</b> Make sure to place all your Thrift structs inside a folder
