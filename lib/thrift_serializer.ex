@@ -1,4 +1,4 @@
-defmodule ElixirThriftSerializer do
+defmodule ThriftSerializer do
   require Logger
 
   defmacro __using__(opts) do
@@ -8,10 +8,10 @@ defmodule ElixirThriftSerializer do
     file_types = String.to_atom("#{file_name}_types")
 
     quote do
-      import ElixirThriftSerializer
+      import ThriftSerializer
       require Logger
 
-      defmodule ElixirThriftSerializerStruct do
+      defmodule Structs do
         use Riffed.Struct, [{unquote(file_types), [unquote_splicing(structs)]}]
       end
 
@@ -25,7 +25,7 @@ defmodule ElixirThriftSerializer do
                {:ok, binary_protocol} <- :thrift_binary_protocol.new(memory_buffer_transport),
                {_, {:ok, record}} <- :thrift_protocol.read(binary_protocol, struct_definition)) do
 
-               {:ok, ElixirThriftSerializerStruct.to_elixir(record, struct_definition)}
+               {:ok, Structs.to_elixir(record, struct_definition)}
           end
 
         rescue _ ->
@@ -43,7 +43,7 @@ defmodule ElixirThriftSerializer do
               {:ok, pf} <- :thrift_binary_protocol.new_protocol_factory(tf, []),
               {:ok, binary_protocol} <- pf.()) do
 
-                proto = ElixirThriftSerializerStruct.to_erlang(struct_to_serialize, struct_definition)
+                proto = Structs.to_erlang(struct_to_serialize, struct_definition)
                 |> write_proto(binary_protocol, struct_definition)
 
                 {_, data} = :thrift_protocol.flush_transport(proto)
