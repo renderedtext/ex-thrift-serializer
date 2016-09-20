@@ -13,9 +13,7 @@ defmodule ThriftSerializerTest do
     user = Structs.User.new(name: "Wade", age: 25)
     binary = Structs.encode(user, :User)
 
-    {:ok, hash} = Structs.decode(binary, :User)
-
-    assert hash == user
+    assert Structs.decode(binary, :User) == user
   end
 
 end
