@@ -1,18 +1,21 @@
 defmodule ThriftSerializerTest do
   use ExUnit.Case
-  use ThriftSerializer, file: ["example"], structs: [:User]
 
-  test "serialize and deserialize" do
-    user = Structs.User.new(name: "Wade Winston Wilson", age: 25)
+  test "Encode hash to binary" do
+    user = Structs.User.new(name: "Wade", age: 25)
+    binary = Structs.serialize(user, :User)
 
-    serialized = serialize(user, :User)
-
-    {:ok, deserialized} = deserialize(serialized, :User)
-
-    assert user == %ThriftSerializerTest.Structs.User{age: 25,
-        name: "Wade Winston Wilson"}
-
-    assert user == deserialized
-
+    assert binary ==
+      <<11, 0, 1, 0, 0, 0, 4, 87, 97, 100, 101, 8, 0, 2, 0, 0, 0, 25, 0>>
   end
+
+  test "Decode binary to hash" do
+    user = Structs.User.new(name: "Wade", age: 25)
+    binary = Structs.serialize(user, :User)
+
+    {:ok, hash} = Structs.deserialize(binary, :User)
+
+    assert hash == user
+  end
+
 end

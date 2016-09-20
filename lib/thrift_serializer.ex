@@ -7,10 +7,7 @@ defmodule ThriftSerializer do
 
     quote do
       import ThriftSerializer
-
-      defmodule Structs do
-        use Riffed.Struct, [{unquote(file_types), [unquote_splicing(structs)]}]
-      end
+      use Riffed.Struct, [{unquote(file_types), [unquote_splicing(structs)]}]
 
       def deserialize(record_binary, struct_name) do
         struct_definition = {:struct, {unquote(file_types), struct_name}}
@@ -20,7 +17,7 @@ defmodule ThriftSerializer do
             {:ok, binary_protocol} <- :thrift_binary_protocol.new(memory_buffer_transport),
             {_, {:ok, record}} <- :thrift_protocol.read(binary_protocol, struct_definition)) do
 
-            {:ok, Structs.to_elixir(record, struct_definition)}
+            {:ok, to_elixir(record, struct_definition)}
           end
 
         rescue _ ->
@@ -36,7 +33,7 @@ defmodule ThriftSerializer do
           {:ok, binary_protocol} <- pf.()) do
 
             {proto, :ok} =
-              Structs.to_erlang(elixir_struct, struct_definition)
+              to_erlang(elixir_struct, struct_definition)
               |> write_proto(binary_protocol, struct_definition)
 
             {_, data} = :thrift_protocol.flush_transport(proto)

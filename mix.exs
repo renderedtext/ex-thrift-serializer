@@ -14,8 +14,7 @@ defmodule ThriftSerializer.Mixfile do
 
   def application do
     [applications:
-      [:logger,
-       :riffed]
+      [:riffed]
     ]
   end
 
