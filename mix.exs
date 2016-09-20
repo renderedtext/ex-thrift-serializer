@@ -13,9 +13,10 @@ defmodule ElixirThriftSerializer.Mixfile do
   end
 
   def application do
-    [applications: [:logger,
-        :riffed
-    ]]
+    [applications:
+      [:logger,
+       :riffed]
+    ]
   end
 
   defp deps do
