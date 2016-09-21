@@ -21,7 +21,7 @@ defmodule ThriftSerializer do
       def encode(hash, [model: model]) do
         struct =
           apply(model, :new, [Map.to_list(hash)])
-          |> validate!
+          |> ThriftSerializer.Validator.validate!
 
         ThriftSerializer.Encoder.encode(struct,
                                         get_struct_name(model, __MODULE__),
@@ -40,13 +40,6 @@ defmodule ThriftSerializer do
         Atom.to_string(model)
         |> String.replace("#{__MODULE__}.", "")
         |> String.to_atom
-      end
-
-      defp validate!(struct) do
-        case (Map.values(struct) |> Enum.any?(&(&1 == :undefined))) do
-          true  -> raise Error, message: "Required field is missing"
-          false -> struct
-        end
       end
 
     end
