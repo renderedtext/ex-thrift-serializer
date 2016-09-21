@@ -20,11 +20,14 @@ defmodule ThriftSerializer do
              {:ok, binary_protocol} <- :thrift_binary_protocol.new(memory_buffer_transport),
              {_, {:ok, record}} <- :thrift_protocol.read(binary_protocol, struct_definition),
 
-             do: to_elixir(record, struct_definition)
+          do: to_elixir(record, struct_definition) |> Map.delete :__struct__
       end
 
-      def encode(elixir_struct, struct_name) do
-        elixir_struct |> validate!
+      def encode(hash, struct_name) do
+        elixir_struct =
+          struct_name.new(Map.to_list(hash))
+          |> validate!
+
         struct_definition = {:struct, {unquote(file_types), struct_name}}
 
         try do
@@ -48,8 +51,9 @@ defmodule ThriftSerializer do
       end
 
       defp validate!(struct) do
-        if (Map.values(struct) |> Enum.any?(&(&1 == :undefined))) do
-           raise Error, message: "Required field is missing"
+        case (Map.values(struct) |> Enum.any?(&(&1 == :undefined))) do
+          true  -> raise Error, message: "Required field is missing"
+          false -> struct
         end
       end
 

@@ -2,7 +2,6 @@ defmodule ThriftSerializerTest do
   use ExUnit.Case
 
   test "encode hash to binary" do
-    # user = Structs.User.new(name: "Wade", age: 25)
     user = %{name: "Wade", age: 25}
     binary = Structs.encode(user, :User)
 
