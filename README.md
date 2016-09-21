@@ -1,65 +1,144 @@
 # Elixir Thrift Serializer
 
-An Elixir app that uses Riffed, which makes life easier for using Thrift with
-Elixir, to make life even easier when you want to serialize and deserialize
-Thrift structs.
+Elixir app based on [riffed](https://github.com/pinterest/riffed), encodes hashes to `thrift` messages and decodes `thrift` messages to hashes. Check out [thrift-serializer](https://github.com/renderedtext/thrift-serializer) for `Ruby`
 
 ## Installation
 
 Add the following to the list of your dependencies:
-```elixir
+
+``` elixir
 def deps do
   [
-    {:elixir_thrift_serializer, github: "renderedtext/elixir-thrift-serializer"}
+    {:thrift_serializer, github: "renderedtext/ex-thrift-serializer"}
   ]
 end
 ```
+
 Also, add it to the list of your applications:
-```elixir
+
+``` elixir
 def application do
-  [applications: [:elixir_thrift_serializer]]
+  [applications: [:thrift_serializer]]
 end
 ```
 
 ## Usage
 
-<b>IMPORTANT:</b> Make sure to place all your Thrift structs inside a folder
+**IMPORTANT:** Make sure to place all your Thrift structs inside a folder
 named `thrift`! The app is configured to search for them there.
 
-In order to be as general as possible, Elixir Thrift Serializer doesn't know
-about the Thrift structures you are using. You'll need to define them yourself
-and, in a way, pass them into the Serializer.<br/>
 A Thrift struct should look something like this:
-```thrift
+
+``` thrift
 struct User {
-  1: string name
+  1: required string name
   2: i32 age
 }
 ```
+
 Lets say that you have defined a struct named `User`, like in the example, and
-placed it in a file called `thrift/models.thrift`. In order to use the
-Serializer, you would have to write the following line:
-```elixir
-use ElixirThriftSerializer, file: ["models"], structs: [:User]
+placed it in a file called `thrift/models.thrift`.
+
+First, declare new module:
+
+``` elixir
+defmodule Structs do
+  use ThriftSerializer, file: ["models"], structs: [:User]
+end
 ```
-In the `file` argument pass the name of the file where the structs are
-stored and in the `structs` argument pass the names of the structs in the
-file you'll be using as atoms. What this does is it defines a new module called
-`ElixirThriftSerializerStruct` that can be used to create an instance of a
-struct, like this:
-```elixir
-ElixirThriftSerializerStruct.User.new(name: "Wade Winston Wilson", age: 25)
+
+* `:file` is name of the `.thrift` file in `thrift` folder where are structs you want to use
+
+* `:structs` is a list of structs defined in corresponding `.thrift` file you want to use
+
+For each struct in `:structs` argument new submodule is defined. In an example above it would be: `Structs.User`
+
+You can create new struct:
+
+``` elixir
+Structs.User.new(name: "Wade Winston Wilson", age: 25)
+
+# => %Structs.User{name: "Wade Winston Wilson", age: 25}
 ```
-This would be an equivalent of:
+
+## Encoding
+
+To encode `elixir` struct into binary:
+
 ```elixir
-%ElixirThrift.Struct.User{age: 25, name: "Wade Winston Wilson"}
+user = Structs.User.new(name: "Wade", age: 25)
+binary = Structs.encode(user, :User)
+
+# => <<11, 0, 1, 0, 0, 0, 4, 87, 97, 100, 101, 8, 0, 2, 0, 0, 0, 25, 0>>
 ```
-In order to serialize an instance of an `User` struct, do the following:
+
+## Decoding
+
+To decode a previously encoded instance, you would do the following:
+
 ```elixir
-user = ElixirThriftStruct.User.new(name: "Wade Winston Wilson", age: 25)
-serialized = serialize(user, model: :User)
+decoded = Structs.decode(binary, :User)
+
+# => %Structs.User{name: "Wade", age: 25}
 ```
-To deserialize a previously serialized instance, you would do the following:
-```elixir
-{:ok, deserialized} = deserialize(serialized, model: :User)
+
+# Model validation
+
+Hashes are validated against corresponding structs defined in `.thrift` file
+
+Exception is raised in case:
+
+* Required field is missing:
+
+``` elixir
+
+user = Structs.User.new(age: 25)  # `name` missing
+binary = Structs.encode(user, :User)
+
+# => Raises ThriftSerializer.Error: "Required field is missing"
+```
+
+* Invalid struct field type:
+
+
+``` elixir
+
+user = Structs.User.new(name: "Wade", age: "25")  # `age` should be number
+binary = Structs.encode(user, :User)
+
+# => Raises ThriftSerializer.Error: "Invalid field type"
+```
+
+Exception is not raised if you try to decode message with invalid struct.
+In that particular case `ThriftSerializer` will map any overlapping fields and
+log info about fields that can't be mapped.
+
+For example let `.thrift` file contains following structs:
+
+``` thrift
+struct User {
+  1 : required string name
+  2 : required i32 age
+}
+
+struct Range {
+  1: i32 min
+  2: i32 max
+}
+```
+
+You can do following:
+
+``` elixir
+defmodule Structs do
+  use ThriftSerializer, file: ["models"], structs: [:User, :Range]
+end
+
+user = Structs.User.new(name: "Wade", age: 25)
+binary = Structs.encode(user, :User)
+
+decoded = Structs.decode(binary, :Range)
+
+# => %Structs.Range{max: 25, min: nil}
+# => [info] Skipped 1 field
 ```

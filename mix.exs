@@ -1,8 +1,8 @@
-defmodule ElixirThriftSerializer.Mixfile do
+defmodule ThriftSerializer.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :elixir_thrift_serializer,
+    [app: :thrift_serializer,
      version: "0.1.0",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
@@ -13,9 +13,9 @@ defmodule ElixirThriftSerializer.Mixfile do
   end
 
   def application do
-    [applications: [:logger,
-        :riffed
-    ]]
+    [applications:
+      [:riffed]
+    ]
   end
 
   defp deps do
