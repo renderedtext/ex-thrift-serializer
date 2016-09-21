@@ -1,5 +1,6 @@
 defmodule Structs do
-  use ThriftSerializer, file: ["example"], structs: [:User]
+  use Riffed.Struct, example_types: [:User]
+  use ThriftSerializer
 end
 
 ExUnit.configure(trace: true)
