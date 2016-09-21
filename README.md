@@ -45,13 +45,13 @@ defmodule Models do
 end
 ```
 
-We can add encoding and decoding by injecting the `use Thriftserializer` in our
+We can add encoding and decoding by injecting the `use ThriftSerializer` in our
 models.
 
 ``` elixir
 defmodule Models do
   use Riffed.Struct, example_models: [:User]
-  use Thriftserializer
+  use ThriftSerializer
 end
 ```
 
