@@ -12,12 +12,6 @@ defmodule ThriftSerializer do
         module
       end
 
-      def thrift_models do
-        [{_, models}] = @thrift_options
-
-        models
-      end
-
       def encode(hash, [model: model]) do
         struct =
           apply(model, :new, [Map.to_list(hash)])
