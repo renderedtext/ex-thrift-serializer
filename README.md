@@ -41,7 +41,7 @@ And the following model definition in our source code:
 
 ``` elixir
 defmodule UserServiceModels do
-  use Riffed.Struct, user_service: [:User]
+  use Riffed.Struct, user_service_types: [:User]
 end
 ```
 
@@ -50,7 +50,7 @@ models.
 
 ``` elixir
 defmodule UserServiceModels do
-  use Riffed.Struct, user_service: [:User]
+  use Riffed.Struct, user_service_types: [:User]
   use ThriftSerializer
 end
 ```
