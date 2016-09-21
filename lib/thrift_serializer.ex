@@ -13,20 +13,33 @@ defmodule ThriftSerializer do
         models
       end
 
-      def encode(hash, model) do
-        ThriftSerializer.Encoder.encode(hash,
-                                        model,
-                                        thrift_module,
-                                        thrift_models,
-                                        __MODULE__)
+      def encode(hash, [model: model]) do
+        struct =
+          apply(model, :new, [Map.to_list(hash)])
+          |> validate!
+
+        ThriftSerializer.Encoder.encode(struct,
+                                        get_struct_name(model, __MODULE__),
+                                        thrift_module)
       end
 
-      def decode(binary, model) do
+      def decode(binary, [model: model]) do
         ThriftSerializer.Decoder.decode(hash,
-                                        model,
-                                        thrift_module,
-                                        thrift_models,
-                                        __MODULE__)
+                                        get_struct_name(model, __MODULE__),
+                                        thrift_module)
+      end
+    end
+
+    defp get_struct_name(model, module) do
+      Atom.to_string(model)
+        |> String.replace("#{__MODULE__}.", "")
+        |> String.to_atom
+    end
+
+    defp validate!(struct) do
+      case (Map.values(struct) |> Enum.any?(&(&1 == :undefined))) do
+        true  -> raise Error, message: "Required field is missing"
+        false -> struct
       end
     end
   end
