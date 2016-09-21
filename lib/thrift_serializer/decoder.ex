@@ -6,7 +6,6 @@ defmodule ThriftSerializer.Decoder do
     record = parse_binary(binary, struct_definition)
 
     apply(module, :to_elixir, [record, struct_definition])
-    |> Map.delete(:__struct__)
   end
 
   defp parse_binary(binary, struct_definition) do
