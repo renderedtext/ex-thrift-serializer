@@ -13,7 +13,7 @@ defmodule ThriftSerializer do
       import ThriftSerializer
       use Riffed.Struct, [{unquote(file_types), [unquote_splicing(structs)]}]
 
-      def decode(record_binary, struct_name) do
+      def decode(record_binary, [model: struct_name]) do
         struct_definition = {:struct, {unquote(file_types), struct_name}}
 
         with {:ok, memory_buffer_transport} <- :thrift_memory_buffer.new(record_binary),
@@ -23,12 +23,13 @@ defmodule ThriftSerializer do
           do: to_elixir(record, struct_definition) |> Map.delete :__struct__
       end
 
-      def encode(hash, struct_name) do
+      def encode(hash, [model: struct_name]) do
         elixir_struct =
-          struct_name.new(Map.to_list(hash))
+          struct_name
+          |> apply(:new, [Map.to_list(hash)])
           |> validate!
 
-        struct_definition = {:struct, {unquote(file_types), struct_name}}
+        struct_definition = {:struct, {unquote(file_types), struct}}
 
         try do
           with {:ok, tf} <- :thrift_memory_buffer.new_transport_factory(),
@@ -57,6 +58,15 @@ defmodule ThriftSerializer do
         end
       end
 
+      defp to_module_name(struct_name) do
+        top_module = String.replace("#{__MODULE__}", "Elixir.", "")
+        # IO.inspect top_module
+
+        "#{top_module}.#{Atom.to_string(struct_name)}"
+        # |> String.replace([".Elixir", "Elixir."], "")
+        # |> IO.inspect
+        |> String.to_atom
+      end
     end
   end
 end
