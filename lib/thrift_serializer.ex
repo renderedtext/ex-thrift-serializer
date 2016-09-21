@@ -24,7 +24,7 @@ defmodule ThriftSerializer do
       end
 
       def decode(binary, [model: model]) do
-        ThriftSerializer.Decoder.decode(hash,
+        ThriftSerializer.Decoder.decode(binary,
                                         get_struct_name(model, __MODULE__),
                                         thrift_module)
       end
