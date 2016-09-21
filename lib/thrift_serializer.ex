@@ -12,25 +12,23 @@ defmodule ThriftSerializer do
         module
       end
 
-      def encode(hash, [model: model]) do
-        struct =
-          apply(model, :new, [Map.to_list(hash)])
-          |> ThriftSerializer.Validator.validate!
+      def encode(struct, [model: model]) do
+        struct |> ThriftSerializer.Validator.validate!
 
         ThriftSerializer.Encoder.encode(struct,
-                                        get_struct_name(model, __MODULE__),
+                                        struct_name(model, __MODULE__),
                                         thrift_module,
                                         __MODULE__)
       end
 
       def decode(binary, [model: model]) do
         ThriftSerializer.Decoder.decode(binary,
-                                        get_struct_name(model, __MODULE__),
+                                        struct_name(model, __MODULE__),
                                         thrift_module,
                                         __MODULE__)
       end
 
-      defp get_struct_name(model, module) do
+      defp struct_name(model, module) do
         Atom.to_string(model)
         |> String.replace("#{__MODULE__}.", "")
         |> String.to_atom
