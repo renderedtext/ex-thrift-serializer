@@ -7,6 +7,8 @@ defmodule ThriftSerializer.Mixfile do
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     compilers: [:thrift | Mix.compilers],
+     thrift_files: Mix.Utils.extract_files(["thrift"], [:thrift]),
      deps: deps()]
   end
 
