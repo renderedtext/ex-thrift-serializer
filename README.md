@@ -29,7 +29,7 @@ end
 For example, if we have the following thrift definition:
 
 ``` thrift
-# thrift/example_models.thrift
+# thrift/user_service.thrift
 
 struct User {
   1: string name
@@ -40,8 +40,8 @@ struct User {
 And the following model definition in our source code:
 
 ``` elixir
-defmodule Models do
-  use Riffed.Struct, example_models: [:User]
+defmodule UserServiceModels do
+  use Riffed.Struct, user_service: [:User]
 end
 ```
 
@@ -49,8 +49,8 @@ We can add encoding and decoding by injecting the `use ThriftSerializer` in our
 models.
 
 ``` elixir
-defmodule Models do
-  use Riffed.Struct, example_models: [:User]
+defmodule UserServiceModels do
+  use Riffed.Struct, user_service: [:User]
   use ThriftSerializer
 end
 ```
@@ -58,9 +58,9 @@ end
 ### Encoding thrift structures to binary data
 
 ``` elixir
-user = Models.User.new(name: "Wade", age: 25)
+user = UserServiceModels.User.new(name: "Wade", age: 25)
 
-Model.encode(user, model: Model.User)
+UserServideModels.encode(user, model: UserServiceModels.User)
 => <<11, 0, 1, 0, 0, 0, 4, 87, 97, 100, 101, 8, 0, 2, 0, 0, 0, 25, 0>>
 ```
 
@@ -69,7 +69,7 @@ Model.encode(user, model: Model.User)
 ``` elixir
 raw_user = <<11, 0, 1, 0, 0, 0, 4, 87, 97, 100, 101, 8, 0, 2, 0, 0, 0, 25, 0>>
 
-Model.decode(raw_user, model: Model.User)
+UserServideModels.decode(raw_user, model: UserServideModels.User)
 ```
 
 ### Validation
