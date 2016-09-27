@@ -1,5 +1,7 @@
 # Elixir Thrift Serializer
 
+[![Build Status](https://semaphoreci.com/api/v1/renderedtext/ex-thrift-serializer/branches/master/badge.svg)](https://semaphoreci.com/renderedtext/ex-thrift-serializer)
+
 Serializer for [riffed](https://github.com/pinterest/riffed).
 
 ## Installation
