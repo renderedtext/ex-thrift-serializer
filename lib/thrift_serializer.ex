@@ -12,6 +12,10 @@ defmodule ThriftSerializer do
         module
       end
 
+      def encode(struct) do
+        encode(struct, model: struct.__struct__)
+      end
+
       def encode(struct, [model: model]) do
         struct |> ThriftSerializer.Validator.validate!
 
