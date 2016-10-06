@@ -62,7 +62,7 @@ end
 ``` elixir
 user = UserServiceModels.User.new(name: "Wade", age: 25)
 
-UserServideModels.encode(user, model: UserServiceModels.User)
+UserServideModels.encode(user)
 => <<11, 0, 1, 0, 0, 0, 4, 87, 97, 100, 101, 8, 0, 2, 0, 0, 0, 25, 0>>
 ```
 
