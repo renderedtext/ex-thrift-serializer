@@ -9,16 +9,28 @@ defmodule ThriftSerializerTest do
      {:ok, [user: user, binary: binary, model: model]}
   end
 
-  test "encode struct to binary", context do
-    assert Structs.encode(context[:user], context[:model]) == context[:binary]
+  test "encode struct to binary - 2 arguments, throwing", context do
+    assert Structs.encode!(context[:user], context[:model]) == context[:binary]
   end
 
-  test "encode struct to binary - 1 argument", context do
-    assert Structs.encode(context[:user]) == context[:binary]
+  test "encode struct to binary - 1 argument, throwing", context do
+    assert Structs.encode!(context[:user]) == context[:binary]
   end
 
-  test "decode binary to struct", context do
-    assert Structs.decode(context[:binary], context[:model]) == context[:user]
+  test "encode struct to binary - 2 arguments, non-throwing", context do
+    assert Structs.encode(context[:user], context[:model]) == {:ok, context[:binary]}
+  end
+
+  test "encode struct to binary - 1 argument, non-throwing", context do
+    assert Structs.encode(context[:user]) == {:ok, context[:binary]}
+  end
+
+  test "decode binary to struct - throwing", context do
+    assert Structs.decode!(context[:binary], context[:model]) == context[:user]
+  end
+
+  test "decode binary to struct - non-throwing", context do
+    assert Structs.decode(context[:binary], context[:model]) == {:ok, context[:user]}
   end
 
 end
