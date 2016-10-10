@@ -17,6 +17,18 @@ defmodule ThriftSerializer do
       end
 
       def encode(struct, [model: model]) do
+        {:ok, encode!(struct, [model: model])}
+      rescue
+        e -> {:error, e}
+      catch
+        e -> {:error, e}
+      end
+
+      def encode!(struct) do
+        encode!(struct, model: struct.__struct__)
+      end
+
+      def encode!(struct, [model: model]) do
         struct |> ThriftSerializer.Validator.validate!
 
         ThriftSerializer.Encoder.encode(struct,
@@ -26,6 +38,14 @@ defmodule ThriftSerializer do
       end
 
       def decode(binary, [model: model]) do
+        {:ok, decode!(binary, [model: model])}
+      rescue
+        e -> {:error, e}
+      catch
+        e -> {:error, e}
+      end
+
+      def decode!(binary, [model: model]) do
         ThriftSerializer.Decoder.decode(binary,
                                         struct_name(model, __MODULE__),
                                         thrift_module,

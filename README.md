@@ -62,8 +62,15 @@ end
 ``` elixir
 user = UserServiceModels.User.new(name: "Wade", age: 25)
 
-UserServideModels.encode(user)
+UserServiceModels.encode!(user)
 => <<11, 0, 1, 0, 0, 0, 4, 87, 97, 100, 101, 8, 0, 2, 0, 0, 0, 25, 0>>
+```
+
+or non-throwing version:
+
+``` elixir
+UserServiceModels.encode(user)
+=> {:ok, <<11, 0, 1, 0, 0, 0, 4, 87, 97, 100, 101, 8, 0, 2, 0, 0, 0, 25, 0>>}
 ```
 
 ### Decoding binary data into thrift structures
@@ -71,10 +78,19 @@ UserServideModels.encode(user)
 ``` elixir
 raw_user = <<11, 0, 1, 0, 0, 0, 4, 87, 97, 100, 101, 8, 0, 2, 0, 0, 0, 25, 0>>
 
-UserServideModels.decode(raw_user, model: UserServideModels.User)
+UserServiceModels.decode!(raw_user, model: UserServiceModels.User)
+=> %UserServiceModels.User{age: 25, name: "Wade"}
+```
+
+or non-throwing version:
+
+``` elixir
+UserServiceModels.decode(raw_user, model: UserServiceModels.User)
+=> {:ok, %UserServiceModels.User{age: 25, name: "Wade"}}
 ```
 
 ### Validation
 
 Models are validates when they are encoded and decoded. If the validation fails,
-the `Thriftserializer.Error` is raised.
+the `Thriftserializer.Error` is raised for for throwing functions and tuple
+`{:error, %ThriftSerializer.Error{...}` is returned for non-throwing ones.
